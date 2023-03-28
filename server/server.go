@@ -1,13 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
 	"os"
 	"os/signal"
 
-	sample_grpc "github.com/Gavachas/grpc_sample"
+	sample_grpc "github.com/Gavachas/grpc_sample/grpc_s"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -18,6 +20,19 @@ type server struct {
 	sample_grpc.ItilServiceServer
 }
 
+func GetRegion() string {
+	regions := []string{
+		"Albania",
+		"Russia",
+		"Spain",
+		"China",
+	}
+	return regions[rand.Intn(len(regions))]
+}
+func (*server) GetUserRegion(ctx context.Context, req *sample_grpc.GetUserRequest) (*sample_grpc.GetUserRegionResponse, error) {
+	fmt.Println("Get user region")
+	return &sample_grpc.GetUserRegionResponse{Name: GetRegion()}, nil
+}
 func main() {
 
 	port := os.Getenv("PORT")
